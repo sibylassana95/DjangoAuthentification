@@ -14,7 +14,31 @@
         Un système d'authentification complet avec Django
       </p>
     </div>
-
+    <div class="mt-10 text-center">
+      <div class="rounded-md bg-white dark:bg-gray-800 shadow-md p-6 inline-block">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">À propos de ce projet</h2>
+        <p class="mt-4 text-lg text-gray-600 dark:text-gray-300">
+          Ce projet est conçu pour fournir une solution d'authentification robuste et sécurisée en utilisant Django. Il comprend les fonctionnalités suivantes :
+        </p>
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="bg-blue-500 text-white p-4 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold">Inscription des utilisateurs</h3>
+          </div>
+          <div class="bg-green-500 text-white p-4 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold">Connexion et déconnexion</h3>
+          </div>
+          <div class="bg-red-500 text-white p-4 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold">Réinitialisation du mot de passe</h3>
+          </div>
+          <div class="bg-yellow-500 text-white p-4 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold">Gestion des profils utilisateurs</h3>
+          </div>
+          <div class="bg-purple-500 text-white p-4 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold">Protection des pages par authentification</h3>
+          </div>
+        </div>
+      </div>
+    </div>
     {% if user.is_authenticated %}
     <div class="mt-10 text-center">
       <div class="rounded-md bg-white dark:bg-gray-800 shadow-md p-6 inline-block">
@@ -24,6 +48,19 @@
         <div class="mt-4">
           <a href="{% url 'logout' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
             Se déconnecter
+          </a>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <div class="mt-10 text-center">
+      <div class="rounded-md bg-white dark:bg-gray-800 shadow-md p-6 inline-block">
+        <p class="text-lg font-medium text-gray-900 dark:text-white">
+          Vous n'êtes pas connecté.
+        </p>
+        <div class="mt-4">
+          <a href="{% url 'login' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+            Se connecter
           </a>
         </div>
       </div>
