@@ -137,7 +137,7 @@ Les contributions sont les bienvenues ! N'hésitez pas à :
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 
-## 👤 Author 
+## 👤 Auteur 
 
 [![LASSANA SIBY](https://avatars.githubusercontent.com/u/103085452?u=13ace4d88a52056741734e0f802ca7c0053e1e80&v=4&s=40)](https://github.com/sibylassana95)  
 Created by **[Lassana SIBY](https://github.com/sibylassana95)**
