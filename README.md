@@ -133,12 +133,12 @@ Les contributions sont les bienvenues ! N'hésitez pas à :
 4. Push sur la branche (`git push origin feature/AmazingFeature`)
 5. Ouvrir une Pull Request
 
-## Licence
+## 📝 License
 
-Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 
-## Contact
+## 👤 Author 
 
-Siby Lassana - [@sibyog13](https://twitter.com/sibyog13)
+[![LASSANA SIBY](https://avatars.githubusercontent.com/u/103085452?u=13ace4d88a52056741734e0f802ca7c0053e1e80&v=4&s=40)](https://github.com/sibylassana95)  
+Created by **[Lassana SIBY](https://github.com/sibylassana95)**
 
-Lien du projet : [https://github.com/sibylassana95/DjangoAuthentification.git](https://github.com/sibylassana95/DjangoAuthentification.git)
