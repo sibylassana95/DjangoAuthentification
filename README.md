@@ -75,7 +75,8 @@ python manage.py runserver
 ## Structure du Projet
 
 ```
-authentication-project/
+DjangoAuthentification/
+
 ├── accounts/                 # Application principale
 │   ├── migrations/          # Migrations de base de données
 │   ├── templates/           # Templates HTML
@@ -86,8 +87,10 @@ authentication-project/
 ├── AuthenticationProject/    # Configuration du projet
 ├── static/                  # Fichiers statiques
 ├── templates/              # Templates globaux
-├── manage.py              
-└── README.md
+├── manage.py               
+└── README.md               # Readme du projet
+└── LICENSE                 # Licence du projet
+
 ```
 
 ## Fonctionnalités Détaillées
