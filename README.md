@@ -18,6 +18,7 @@ Un système d'authentification complet développé avec Django, incluant l'inscr
 - Tailwind CSS
 - Flowbite
 - SQLite3
+- JavaScript
 
 ## Configuration Requise
 
@@ -29,7 +30,7 @@ Un système d'authentification complet développé avec Django, incluant l'inscr
 1. Clonez le dépôt :
 ```bash
 git clone https://github.com/sibylassana95/DjangoAuthentification.git
-cd authentication-project
+cd DjangoAuthentification
 ```
 
 2. Créez un environnement virtuel :
@@ -57,12 +58,13 @@ python manage.py createsuperuser
 
 6. Configurez les variables d'environnement pour l'email dans `settings.py` :
 ```python
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'votre-email@gmail.com'
-EMAIL_HOST_PASSWORD = 'votre-mot-de-passe-app'
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS') == 'True'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 ```
 
 7. Lancez le serveur :
