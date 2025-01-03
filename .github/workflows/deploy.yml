@@ -33,24 +33,36 @@ jobs:
       run: |
         echo "Début du déploiement via l'API PythonAnywhere..."
 
-        # 1. Se connecter et récupérer les dernières modifications du dépôt GitHub
+        # Installer jq pour analyser les réponses JSON
+        sudo apt-get install jq
+
+        # 1. Créer une nouvelle console pour exécuter les commandes
+        RESPONSE=$(curl -s -X POST \
+          -H "Authorization: Token ${PA_API_TOKEN}" \
+          -d '{"executable": "/bin/bash"}' \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/)
+        CONSOLE_ID=$(echo $RESPONSE | jq -r '.id')
+        echo "Console ID: $CONSOLE_ID"
+
+        # 2. Se connecter et récupérer les dernières modifications du dépôt GitHub
         echo "Mise à jour des fichiers via git pull..."
-        curl -X POST \
+        curl -s -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && git pull origin main" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/37410353
+          -d "workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && git pull" \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
 
-        # 2. Exécuter les commandes Django nécessaires (makemigrations, migrate, collectstatic)
+        # 3. Exécuter les commandes Django nécessaires (makemigrations, migrate, collectstatic)
         echo "Exécution des commandes Django..."
-        curl -X POST \
+        curl -s -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/37410353
+          -d "workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput" \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
 
-        # 3. Redémarrer l'application web
+        # 4. Redémarrer l'application web
         echo "Redémarrage de l'application web..."
-        curl -X POST \
+        RESPONSE=$(curl -s -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/webapps/${PA_USERNAME}.pythonanywhere.com/reload/
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/webapps/${PA_USERNAME}.pythonanywhere.com/reload/)
+        echo "Réponse du redémarrage: $RESPONSE"
 
         echo "Déploiement terminé avec succès !"
