@@ -42,19 +42,30 @@ jobs:
           -F "content=@requirements.txt" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/requirements.txt
         
-        # Mise à jour de settings.py
-        curl -X POST \
-          -H "Authorization: Token ${PA_API_TOKEN}" \
-          -F "content=@AuthenticationProject/settings.py" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/AuthenticationProject/settings.py
-
        
+        
+        # Mise à jour des fichiers dans AuthenticationProject
+        echo "Mise à jour des fichiers dans le dossier AuthenticationProject..."
+        for file in $(find AuthenticationProject/ -type f); do
+          curl -X POST \
+            -H "Authorization: Token ${PA_API_TOKEN}" \
+            -F "content=@$file" \
+            https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/AuthenticationProject/$(basename $file)
+        done
+        # Mise à jour des fichiers dans templates
+        echo "Mise à jour des fichiers dans le dossier templates..."
+        for file in $(find templates/ -type f); do
+          curl -X POST \
+            -H "Authorization: Token ${PA_API_TOKEN}" \
+            -F "content=@$file" \
+            https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/templates/$(basename $file)
+        done
 
         # 2. Créer une commande avec toutes les étapes (éviter d'ouvrir trop de consoles)
         echo "Exécution des commandes Django..."
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && git pull && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput" \
+          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification  && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/37410353
 
         # 3. Redémarrer l'application web
