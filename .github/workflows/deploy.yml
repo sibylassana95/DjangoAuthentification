@@ -42,8 +42,6 @@ jobs:
           -F "content=@requirements.txt" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/requirements.txt
         
-       
-        
         # Mise à jour des fichiers dans AuthenticationProject
         echo "Mise à jour des fichiers dans le dossier AuthenticationProject..."
         for file in $(find AuthenticationProject/ -type f); do
@@ -70,12 +68,18 @@ jobs:
             -F "content=@$file" \
             https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/accounts/$(basename $file)
         done
-        # 2. Créer une commande avec toutes les étapes (éviter d'ouvrir trop de consoles)
-        echo "Exécution des commandes Django..."
-        curl -X GET \
+
+        # 2. Exécuter des commandes dans la console existante
+        echo "Exécution des commandes Django dans la console existante..."
+
+        # ID de la console existante
+        CONSOLE_ID="37411334"
+
+        # Exécution des commandes Django dans la console existante
+        curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification  && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/37411334/
+          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput" \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send/
 
         # 3. Redémarrer l'application web
         echo "Redémarrage de l'application web..."
