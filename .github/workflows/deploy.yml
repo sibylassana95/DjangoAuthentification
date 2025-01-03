@@ -23,7 +23,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pythonanywhere
+        pip install requests
 
     # Étape 3 : Déployer avec l'API PythonAnywhere
     - name: Deploy using PythonAnywhere API
@@ -33,13 +33,24 @@ jobs:
       run: |
         echo "Début du déploiement via l'API PythonAnywhere..."
 
-        # Mettre à jour le code sur PythonAnywhere
-        curl -X POST -u "${PA_USERNAME}:${PA_API_TOKEN}" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/.git/ \
-          -F content=@.git/
+        # 1. Mettre à jour le code source
+        echo "Mise à jour des fichiers..."
+        curl -X POST \
+          -H "Authorization: Token ${PA_API_TOKEN}" \
+          -F "content=@requirements.txt" \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/requirements.txt
 
-        # Redémarrer l'application web
-        curl -X POST -u "${PA_USERNAME}:${PA_API_TOKEN}" \
+        curl -X POST \
+          -H "Authorization: Token ${PA_API_TOKEN}" \
+          -F "content=@AuthenticationProject/settings.py" \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/AuthenticationProject/settings.py
+
+        # Ajoutez ici d'autres fichiers à envoyer si nécessaire.
+
+        # 2. Redémarrer l'application web
+        echo "Redémarrage de l'application web..."
+        curl -X POST \
+          -H "Authorization: Token ${PA_API_TOKEN}" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/webapps/${PA_USERNAME}.pythonanywhere.com/reload/
 
         echo "Déploiement terminé avec succès !"
