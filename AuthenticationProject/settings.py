@@ -121,13 +121,19 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = '/static/'
-MEDIA_URL = '/images/'
+MEDIA_URL = '/media/'
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
-]
+if ENVIRONMENT== 'production':
+    # Paramètres pour la production
+    STATIC_ROOT = '/home/djangoauth/DjangoAuthentification/static'
+    MEDIA_ROOT = '/home/djangoauth/DjangoAuthentification/media'
+else:
+    # Paramètres pour le développement
+    STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, 'static')
+    ]
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'images')
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'images')
 
 
 # Default primary key field type
