@@ -56,7 +56,7 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-6. Configurez les variables d'environnement pour l'email dans `settings.py` :
+6. Configurez les variables d'environnement pour l'email et la base de donnée dans `settings.py` :
 ```python
 EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
 EMAIL_HOST = os.getenv('EMAIL_HOST')
@@ -66,7 +66,18 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 ```
-
+```python
+ DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
+    }
+    }
+```
 7. Lancez le serveur :
 ```bash
 python manage.py runserver
