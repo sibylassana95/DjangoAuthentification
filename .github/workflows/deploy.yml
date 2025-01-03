@@ -71,11 +71,18 @@ jobs:
 
         # 2. Lister toutes les consoles actives pour obtenir l'ID de la console
         echo "Récupération de la console existante..."
-        CONSOLE_ID=$(curl -s -X GET \
+        RESPONSE=$(curl -s -X GET \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/ | jq -r '.consoles[0].id')  # Utilisation de la première console disponible
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/)
+
+        # Afficher la réponse brute pour diagnostiquer
+        echo "Réponse de l'API : ${RESPONSE}"
+
+        # Extraire l'ID de la première console (si la réponse est bien une liste d'objets)
+        CONSOLE_ID=$(echo $RESPONSE | jq -r '.consoles[0].id')
 
         echo "Console ID : ${CONSOLE_ID}"
+
 
         # 3. Exécuter des commandes dans la console existante
         echo "Exécution des commandes Django dans la console existante..."
