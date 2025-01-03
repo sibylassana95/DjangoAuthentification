@@ -37,7 +37,7 @@ jobs:
         echo "Mise à jour des fichiers via git pull..."
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && git pull origin main" \
+          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && git pull" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/37410353/
 
         # 2. Exécuter les commandes Django nécessaires (makemigrations, migrate, collectstatic)
