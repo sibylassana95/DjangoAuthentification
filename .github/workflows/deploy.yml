@@ -36,26 +36,13 @@ jobs:
         # 1. Mettre à jour le code source
         echo "Mise à jour des fichiers..."
 
-        # Mettre à jour requirements.txt
-        curl -X POST \
-          -H "Authorization: Token ${PA_API_TOKEN}" \
-          -F "content=@requirements.txt" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/requirements.txt
-
-        # Mettre à jour les fichiers dans le dossier templates
-        for file in templates/*; do
+        # Mettre à jour tous les fichiers dans le dossier DjangoAuthentification
+        find DjangoAuthentification -type f | while read file; do
+          remote_path=$(echo ${file} | sed "s/DjangoAuthentification\//\/home\/${PA_USERNAME}\/DjangoAuthentification\//")
           curl -X POST \
             -H "Authorization: Token ${PA_API_TOKEN}" \
             -F "content=@${file}" \
-            https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/AuthenticationProject/${file}
-        done
-
-        # Mettre à jour les fichiers dans le dossier AuthenticationProject
-        for file in AuthenticationProject/*; do
-          curl -X POST \
-            -H "Authorization: Token ${PA_API_TOKEN}" \
-            -F "content=@${file}" \
-            https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/${file}
+            https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/${remote_path}
         done
 
         # 2. Créer une commande avec toutes les étapes (éviter d'ouvrir trop de consoles)
