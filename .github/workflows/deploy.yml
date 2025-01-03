@@ -33,27 +33,24 @@ jobs:
       run: |
         echo "Début du déploiement via l'API PythonAnywhere..."
 
-        
-
-        # 2. Se connecter et récupérer les dernières modifications du dépôt GitHub
+        # 1. Se connecter et récupérer les dernières modifications du dépôt GitHub
         echo "Mise à jour des fichiers via git pull..."
-        curl -s -X POST \
+        curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && git pull" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/consoles/37410708
+          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && git pull origin main" \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/37410353
 
-        # 3. Exécuter les commandes Django nécessaires (makemigrations, migrate, collectstatic)
+        # 2. Exécuter les commandes Django nécessaires (makemigrations, migrate, collectstatic)
         echo "Exécution des commandes Django..."
-        curl -s -X POST \
+        curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/consoles/37410708
+          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput" \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/37410353
 
-        # 4. Redémarrer l'application web
+        # 3. Redémarrer l'application web
         echo "Redémarrage de l'application web..."
-        RESPONSE=$(curl -s -X POST \
+        curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/webapps/${PA_USERNAME}.pythonanywhere.com/reload/)
-        echo "Réponse du redémarrage: $RESPONSE"
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/webapps/${PA_USERNAME}.pythonanywhere.com/reload/
 
         echo "Déploiement terminé avec succès !"
