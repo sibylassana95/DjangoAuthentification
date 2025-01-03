@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 # Charger le fichier .env en fonction de l'environnement
-ENVIRONMENT = os.getenv('DJANGO_ENV', 'production')  # Par défaut, production
+ENVIRONMENT = os.getenv('DJANGO_ENV', 'local')  
 
 if ENVIRONMENT == 'local':
     load_dotenv(dotenv_path=BASE_DIR / '.env.local')
