@@ -88,7 +88,7 @@ jobs:
         echo "Exécution des commandes Django dans la console existante..."
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "input=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput" \
+          -d "input=workon venv && cd DjangoAuthentification && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
 
         # 4. Redémarrer l'application web
