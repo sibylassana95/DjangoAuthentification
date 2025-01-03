@@ -40,14 +40,14 @@ jobs:
         curl -s -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
           -d "workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && git pull" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/consoles/37410708/send_input/
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/consoles/37410708
 
         # 3. Exécuter les commandes Django nécessaires (makemigrations, migrate, collectstatic)
         echo "Exécution des commandes Django..."
         curl -s -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
           -d "workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/consoles/37410708/send_input/
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/consoles/37410708
 
         # 4. Redémarrer l'application web
         echo "Redémarrage de l'application web..."
