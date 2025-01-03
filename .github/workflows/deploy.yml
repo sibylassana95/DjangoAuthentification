@@ -33,22 +33,19 @@ jobs:
       run: |
         echo "Début du déploiement via l'API PythonAnywhere..."
 
-        # Utiliser la console Python 3.10 spécifiée pour tout le déploiement
-        CONSOLE_ID=37410353  # Identifiant de votre console Python 3.10
-
         # 1. Se connecter et récupérer les dernières modifications du dépôt GitHub
         echo "Mise à jour des fichiers via git pull..."
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
           -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && git pull origin main" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send/
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/37410353/
 
         # 2. Exécuter les commandes Django nécessaires (makemigrations, migrate, collectstatic)
         echo "Exécution des commandes Django..."
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
           -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send/
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/37410353/
 
         # 3. Redémarrer l'application web
         echo "Redémarrage de l'application web..."
