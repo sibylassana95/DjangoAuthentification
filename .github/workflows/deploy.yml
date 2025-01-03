@@ -15,10 +15,10 @@ jobs:
       uses: actions/checkout@v3
 
     # Étape 2 : Configurer Python et installer les dépendances
-    - name: Set up Python environment
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
     - name: Install dependencies
       run: |
@@ -69,19 +69,22 @@ jobs:
             https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/accounts/$(basename $file)
         done
 
-        # 2. Exécuter des commandes dans la console existante
+        # 2. Lister toutes les consoles actives pour obtenir l'ID de la console
+        echo "Récupération de la console existante..."
+        CONSOLE_ID=$(curl -s -X GET \
+          -H "Authorization: Token ${PA_API_TOKEN}" \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/ | jq -r '.consoles[0].id')  # Utilisation de la première console disponible
+
+        echo "Console ID : ${CONSOLE_ID}"
+
+        # 3. Exécuter des commandes dans la console existante
         echo "Exécution des commandes Django dans la console existante..."
-
-        # ID de la console existante
-        CONSOLE_ID="37411334"
-
-        # Exécution des commandes Django dans la console existante
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send/
+          -d "input=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput" \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
 
-        # 3. Redémarrer l'application web
+        # 4. Redémarrer l'application web
         echo "Redémarrage de l'application web..."
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
