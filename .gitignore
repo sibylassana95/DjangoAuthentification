@@ -30,6 +30,8 @@ media
 # Environments
 .env
 .venv
+.env.local
+.env.production
 env/
 venv/
 ENV/
