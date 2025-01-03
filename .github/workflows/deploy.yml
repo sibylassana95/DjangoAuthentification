@@ -35,28 +35,25 @@ jobs:
 
         # 1. Se connecter et récupérer les dernières modifications du dépôt GitHub
         echo "Mise à jour des fichiers via git pull..."
-        curl -X POST \
-          -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && git status" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/37410353/
-
-        # Vérifier la sortie git status pour confirmer que les modifications sont présentes
-        curl -X POST \
+        RESPONSE=$(curl -s -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
           -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && git pull" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/37410353/
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/37410353/)
+        echo "Réponse du git pull: $RESPONSE"
 
         # 2. Exécuter les commandes Django nécessaires (makemigrations, migrate, collectstatic)
         echo "Exécution des commandes Django..."
-        curl -X POST \
+        RESPONSE=$(curl -s -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
           -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/37410353/
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/37410353/)
+        echo "Réponse des commandes Django: $RESPONSE"
 
         # 3. Redémarrer l'application web
         echo "Redémarrage de l'application web..."
-        curl -X POST \
+        RESPONSE=$(curl -s -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/webapps/${PA_USERNAME}.pythonanywhere.com/reload/
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/webapps/${PA_USERNAME}.pythonanywhere.com/reload/)
+        echo "Réponse du redémarrage: $RESPONSE"
 
         echo "Déploiement terminé avec succès !"
