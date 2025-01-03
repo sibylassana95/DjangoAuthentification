@@ -37,6 +37,12 @@ jobs:
         echo "Mise à jour des fichiers via git pull..."
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
+          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && git status" \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/37410353/
+
+        # Vérifier la sortie git status pour confirmer que les modifications sont présentes
+        curl -X POST \
+          -H "Authorization: Token ${PA_API_TOKEN}" \
           -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && git pull" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/37410353/
 
