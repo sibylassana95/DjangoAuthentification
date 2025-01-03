@@ -33,17 +33,13 @@ jobs:
       run: |
         echo "Début du déploiement via l'API PythonAnywhere..."
 
-        # 1. Mettre à jour les fichiers nécessaires (requirements.txt, settings.py, et fichiers dans templates)
+        # 1. Mettre à jour les fichiers nécessaires
         echo "Mise à jour des fichiers..."
-        
-        # Mise à jour de requirements.txt
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
           -F "content=@requirements.txt" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/requirements.txt
-        
-       
-        
+
         # Mise à jour des fichiers dans AuthenticationProject
         echo "Mise à jour des fichiers dans le dossier AuthenticationProject..."
         for file in $(find AuthenticationProject/ -type f); do
@@ -57,7 +53,7 @@ jobs:
         echo "Mise à jour des fichiers dans le dossier templates..."
         for file in $(find templates/ -type f); do
           curl -X POST \
-            -H "Authorization: Token ${PA_API_TOKEN}" \
+            -H "Authorization: Token ${PA_API_TOKEN)" \
             -F "content=@$file" \
             https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/templates/$(basename $file)
         done
@@ -70,12 +66,25 @@ jobs:
             -F "content=@$file" \
             https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/accounts/$(basename $file)
         done
-        # 2. Créer une commande avec toutes les étapes (éviter d'ouvrir trop de consoles)
-        echo "Exécution des commandes Django..."
+
+        # 2. Créer des consoles séparées pour chaque commande Django
+        echo "Exécution de makemigrations..."
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification  && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/37410353
+          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py makemigrations" \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/
+
+        echo "Exécution de migrate..."
+        curl -X POST \
+          -H "Authorization: Token ${PA_API_TOKEN}" \
+          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py migrate" \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/
+
+        echo "Exécution de collectstatic..."
+        curl -X POST \
+          -H "Authorization: Token ${PA_API_TOKEN}" \
+          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py collectstatic --noinput" \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/
 
         # 3. Redémarrer l'application web
         echo "Redémarrage de l'application web..."
