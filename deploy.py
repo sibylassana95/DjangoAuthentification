@@ -2,7 +2,7 @@ import os
 import subprocess
 
 # Activer l'environnement virtuel
-subprocess.run(['source', '/home/djangoauth/.virtualenvs/venv/bin/activate'], shell=True)
+subprocess.run(['workon', 'venv'], shell=True)
 
 # Se déplacer dans le répertoire DjangoAuthentification
 os.chdir('/home/djangoauth/DjangoAuthentification')
