@@ -44,7 +44,7 @@ jobs:
         echo "Installation des dépendances..."
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && pip install -r requirements.txt" \
+          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && pip install django" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/
 
         # Étape 3.3 : Exécuter les commandes Django nécessaires
