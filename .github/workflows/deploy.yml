@@ -33,36 +33,36 @@ jobs:
       run: |
         echo "Début du déploiement via l'API PythonAnywhere..."
 
-        # Installer jq pour analyser les réponses JSON
-        sudo apt-get install jq
-
-        # 1. Créer une nouvelle console pour exécuter les commandes
-        RESPONSE=$(curl -s -X POST \
+        # 1. Mettre à jour le code source
+        echo "Mise à jour des fichiers..."
+        curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d '{"executable": "/bin/bash"}' \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/)
-        CONSOLE_ID=$(echo $RESPONSE | jq -r '.id')
-        echo "Console ID: $CONSOLE_ID"
+          -F "content=@requirements.txt" \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/requirements.txt
 
-        # 2. Se connecter et récupérer les dernières modifications du dépôt GitHub
-        echo "Mise à jour des fichiers via git pull..."
-        curl -s -X POST \
+        curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && git pull" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
+          -F "content=@templates/*" \
+         https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/AuthenticationProject/templates/\*
 
-        # 3. Exécuter les commandes Django nécessaires (makemigrations, migrate, collectstatic)
+
+        curl -X POST \
+          -H "Authorization: Token ${PA_API_TOKEN}" \
+          -F "content=@AuthenticationProject/*" \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/AuthenticationProject/\*
+  
+
+        # 2. Créer une commande avec toutes les étapes (éviter d'ouvrir trop de consoles)
         echo "Exécution des commandes Django..."
-        curl -s -X POST \
+        curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
+          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput" \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/37410353
 
-        # 4. Redémarrer l'application web
+        # 3. Redémarrer l'application web
         echo "Redémarrage de l'application web..."
-        RESPONSE=$(curl -s -X POST \
+        curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/webapps/${PA_USERNAME}.pythonanywhere.com/reload/)
-        echo "Réponse du redémarrage: $RESPONSE"
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/webapps/${PA_USERNAME}.pythonanywhere.com/reload/
 
         echo "Déploiement terminé avec succès !"
