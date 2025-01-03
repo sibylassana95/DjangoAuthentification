@@ -3,10 +3,16 @@ import os
 from dotenv import load_dotenv
 
 # Charger les variables d'environnement
-load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+# Charger le fichier .env en fonction de l'environnement
+ENVIRONMENT = os.getenv('DJANGO_ENV', 'production')  # Par défaut, production
 
+if ENVIRONMENT == 'local':
+    load_dotenv(dotenv_path=BASE_DIR / '.env.local')
+else:
+    load_dotenv(dotenv_path=BASE_DIR / '.env.production')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -66,7 +72,6 @@ WSGI_APPLICATION = 'AuthenticationProject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-ENVIRONMENT = os.getenv('DJANGO_ENV', 'production')  # Par défaut, local
 
 if ENVIRONMENT == 'local':
     DATABASES = {
@@ -151,3 +156,7 @@ EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS') == 'True'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
+
+
+print("DB_HOST:", os.getenv('DB_HOST'))
+print("DJANGO_ENV:", os.getenv('DJANGO_ENV'))
