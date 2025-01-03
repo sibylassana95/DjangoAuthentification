@@ -1,0 +1,60 @@
+name: Deploy to PythonAnywhere
+
+on:
+  push:
+    branches:
+      - main  # Déploiement automatique uniquement sur la branche principale
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Étape 1 : Cloner le code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Étape 2 : Configurer Python et installer les dépendances
+    - name: Set up Python environment
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pythonanywhere
+
+    # Étape 3 : Déployer sur PythonAnywhere
+    - name: Deploy to PythonAnywhere
+      env:
+        PA_USERNAME: ${{ secrets.PA_USERNAME }}
+        PA_API_TOKEN: ${{ secrets.PA_API_TOKEN }}
+      run: |
+        ssh ${PA_USERNAME}@ssh.pythonanywhere.com << 'EOF'
+          set -e  # Arrêter l'exécution si une commande échoue
+          echo "Début du déploiement..."
+
+          # Aller dans le répertoire de l'application
+          cd ~/DjangoAuthentification
+
+          # Mettre à jour le code source
+          git pull origin main
+
+          # Activer l'environnement virtuel
+          source ~/DjangoAuthentification/venv/bin/activate
+
+          # Installer les dépendances
+          pip install -r requirements.txt
+
+          # Exécuter les migrations Django
+          python manage.py migrate
+
+          # Collecter les fichiers statiques
+          python manage.py collectstatic --noinput
+
+          # Redémarrer l'application web
+          pa_reload_webapp.py ${PA_USERNAME}.pythonanywhere.com
+
+          echo "Déploiement terminé avec succès !"
+        EOF
