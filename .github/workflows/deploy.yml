@@ -48,13 +48,13 @@ jobs:
           -F "content=@AuthenticationProject/settings.py" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/AuthenticationProject/settings.py
 
-        # Mise à jour des fichiers dans templates
-        echo "Mise à jour des fichiers dans le dossier templates..."
-        for file in $(find templates/ -type f); do
+        # Mise à jour des fichiers 
+        echo "Mise à jour des fichiers dans le dossier ..."
+        for file in $(find DjangoAuthentification/ -type f); do
           curl -X POST \
             -H "Authorization: Token ${PA_API_TOKEN}" \
             -F "content=@$file" \
-            https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/templates/$(basename $file)
+            https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/$(basename $file)
         done
 
         # 2. Créer une commande avec toutes les étapes (éviter d'ouvrir trop de consoles)
