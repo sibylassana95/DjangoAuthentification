@@ -44,24 +44,24 @@ jobs:
         echo "Installation des dépendances..."
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "command=workon myvenv && cd /home/${PA_USERNAME}/DjangoAuthentification && pip install -r requirements.txt" \
+          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && pip install -r requirements.txt" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/
 
         # Étape 3.3 : Exécuter les commandes Django nécessaires
         echo "Exécution des commandes Django..."
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "command=workon myvenv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py makemigrations" \
+          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py makemigrations" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/
 
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "command=workon myvenv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py migrate" \
+          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py migrate" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/
 
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "command=workon myvenv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py collectstatic --noinput" \
+          -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification && python manage.py collectstatic --noinput" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/
 
         # Étape 3.4 : Redémarrer l'application web
