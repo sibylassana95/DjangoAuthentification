@@ -69,7 +69,7 @@ jobs:
             https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/accounts/$(basename $file)
         done
 
-                        # Étape 1 : Lister toutes les consoles actives pour obtenir l'ID de la console
+        # Étape 1 : Lister toutes les consoles actives pour obtenir l'ID de la console
         echo "Récupération de la console existante..."
         RESPONSE=$(curl -s -X GET \
           -H "Authorization: Token ${PA_API_TOKEN}" \
@@ -85,31 +85,41 @@ jobs:
 
         # Étape 2 : Exécuter les commandes Django dans la console existante
 
-        # Envoyer la commande pour activer l'environnement virtuel
+        # 1. Activer l'environnement virtuel
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
           -d "input=workon venv" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
 
-        # Envoyer la commande makemigrations
+        # Attendre que l'environnement virtuel soit activé
+        sleep 2  # Laissez un peu de temps pour que l'environnement soit bien activé
+
+        # 2. Exécuter la commande makemigrations
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
           -d "input=python manage.py makemigrations" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
 
-        # Envoyer la commande migrate
+        # Attendre un peu avant d'envoyer la commande suivante
+        sleep 2
+
+        # 3. Exécuter la commande migrate
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
           -d "input=python manage.py migrate" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
 
-        # Envoyer la commande collectstatic
+        # Attendre un peu avant d'envoyer la commande suivante
+        sleep 2
+
+        # 4. Exécuter la commande collectstatic
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
           -d "input=python manage.py collectstatic --noinput" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
 
         echo "Toutes les commandes Django ont été envoyées à la console."
+
 
         # 4. Redémarrer l'application web
         echo "Redémarrage de l'application web..."
