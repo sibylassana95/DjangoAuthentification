@@ -98,7 +98,7 @@ jobs:
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
 
         # Attendre que l'environnement virtuel soit activé
-        sleep 5  # Augmenter le temps d'attente
+        sleep 10  # Augmenter le temps d'attente
 
         # 2. Se déplacer dans le répertoire DjangoAuthentification
         curl -X POST \
@@ -107,7 +107,7 @@ jobs:
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
 
         # Attendre que la commande cd soit exécutée
-        sleep 5  # Augmenter le temps d'attente
+        sleep 10  # Augmenter le temps d'attente
 
         # 3. Exécuter la commande makemigrations
         curl -X POST \
@@ -116,7 +116,7 @@ jobs:
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
 
         # Attendre un peu avant d'envoyer la commande suivante
-        sleep 5  # Augmenter le temps d'attente
+        sleep 10  # Augmenter le temps d'attente
 
         # 4. Exécuter la commande migrate
         curl -X POST \
@@ -125,7 +125,7 @@ jobs:
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
 
         # Attendre un peu avant d'envoyer la commande suivante
-        sleep 5  # Augmenter le temps d'attente
+        sleep 10  # Augmenter le temps d'attente
 
         # 5. Exécuter la commande collectstatic
         curl -X POST \
