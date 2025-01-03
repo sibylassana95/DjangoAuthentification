@@ -69,49 +69,18 @@ jobs:
             https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/accounts/$(basename $file)
         done
 
-        # Étape 4 : Exécuter les commandes Django dans la console existante
-        echo "Récupération de la console existante..."
-        RESPONSE=$(curl -s -X GET \
-          -H "Authorization: Token ${PA_API_TOKEN}" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/)
-
-        # Afficher la réponse brute pour diagnostiquer
-        echo "Réponse de l'API : ${RESPONSE}"
-
-        # Extraire l'ID de la première console dans le tableau
-        CONSOLE_ID=$(echo $RESPONSE | jq -r '.[0].id')
-
-        echo "Console ID : ${CONSOLE_ID}"
-
-        # Vérification de l'ID de la console
-        if [ -z "$CONSOLE_ID" ]; then
-          echo "Erreur : Impossible de récupérer l'ID de la console."
-          exit 1
-        fi
-
-        # Envoi des commandes à la console existante
-        COMMANDS=(
-          "workon venv"
-          "cd /home/${PA_USERNAME}/DjangoAuthentification"
-          "python manage.py makemigrations"
-          "python manage.py migrate"
-          "python manage.py collectstatic --noinput"
-        )
-
-        for COMMAND in "${COMMANDS[@]}"; do
-          curl -X POST \
-            -H "Authorization: Token ${PA_API_TOKEN}" \
-            -d "input=${COMMAND}\n" \
-            https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
-          sleep 5  # Augmenter le temps d'attente si nécessaire
-        done
-
-        echo "Toutes les commandes Django ont été envoyées à la console."
-
-        # Étape 5 : Redémarrer l'application web
-        echo "Redémarrage de l'application web..."
+        # Étape 4 : Envoyer le script de déploiement
+        echo "Envoi du script de déploiement..."
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/webapps/${PA_USERNAME}.pythonanywhere.com/reload/
+          -F "content=@deploy.py" \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/deploy.py
+
+        # Étape 5 : Exécuter le script de déploiement
+        echo "Exécution du script de déploiement..."
+        curl -X POST \
+          -H "Authorization: Token ${PA_API_TOKEN}" \
+          -d "input=python /home/${PA_USERNAME}/deploy.py\n" \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
 
         echo "Déploiement terminé avec succès !"
