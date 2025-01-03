@@ -35,22 +35,28 @@ jobs:
 
         # 1. Mettre à jour le code source
         echo "Mise à jour des fichiers..."
+
+        # Mettre à jour requirements.txt
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
           -F "content=@requirements.txt" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/requirements.txt
 
-        curl -X POST \
-          -H "Authorization: Token ${PA_API_TOKEN}" \
-          -F "content=@templates/*" \
-         https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/AuthenticationProject/templates/\*
+        # Mettre à jour les fichiers dans le dossier templates
+        for file in templates/*; do
+          curl -X POST \
+            -H "Authorization: Token ${PA_API_TOKEN}" \
+            -F "content=@${file}" \
+            https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/AuthenticationProject/${file}
+        done
 
-
-        curl -X POST \
-          -H "Authorization: Token ${PA_API_TOKEN}" \
-          -F "content=@AuthenticationProject/*" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/AuthenticationProject/\*
-  
+        # Mettre à jour les fichiers dans le dossier AuthenticationProject
+        for file in AuthenticationProject/*; do
+          curl -X POST \
+            -H "Authorization: Token ${PA_API_TOKEN}" \
+            -F "content=@${file}" \
+            https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/${file}
+        done
 
         # 2. Créer une commande avec toutes les étapes (éviter d'ouvrir trop de consoles)
         echo "Exécution des commandes Django..."
