@@ -76,11 +76,12 @@ jobs:
           -F "content=@deploy.py" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/deploy.py
 
-        # Étape 5 : Exécuter le script de déploiement
-        echo "Exécution du script de déploiement..."
+        # Étape 5 : Créer une tâche programmée pour exécuter le script
+        echo "Création de la tâche programmée pour exécuter le script..."
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "input=python /home/${PA_USERNAME}/deploy.py\n" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
+          -H "Content-Type: application/json" \
+          -d '{"command": "python /home/'${PA_USERNAME}'/deploy.py", "time": "now", "interval": "once"}' \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/schedule/
 
         echo "Déploiement terminé avec succès !"
