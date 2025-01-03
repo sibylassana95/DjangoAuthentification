@@ -69,7 +69,7 @@ jobs:
             https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/accounts/$(basename $file)
         done
 
-        # 2. Lister toutes les consoles actives pour obtenir l'ID de la console
+                # 2. Lister toutes les consoles actives pour obtenir l'ID de la console
         echo "Récupération de la console existante..."
         RESPONSE=$(curl -s -X GET \
           -H "Authorization: Token ${PA_API_TOKEN}" \
@@ -78,8 +78,8 @@ jobs:
         # Afficher la réponse brute pour diagnostiquer
         echo "Réponse de l'API : ${RESPONSE}"
 
-        # Extraire l'ID de la première console (si la réponse est bien une liste d'objets)
-        CONSOLE_ID=$(echo $RESPONSE | jq -r '.consoles[0].id')
+        # Extraire l'ID de la première console dans le tableau
+        CONSOLE_ID=$(echo $RESPONSE | jq -r '.[0].id')
 
         echo "Console ID : ${CONSOLE_ID}"
 
