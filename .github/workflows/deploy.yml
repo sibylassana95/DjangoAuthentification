@@ -25,36 +25,21 @@ jobs:
         python -m pip install --upgrade pip
         pip install pythonanywhere
 
-    # Étape 3 : Déployer sur PythonAnywhere
-    - name: Deploy to PythonAnywhere
+    # Étape 3 : Déployer avec l'API PythonAnywhere
+    - name: Deploy using PythonAnywhere API
       env:
         PA_USERNAME: ${{ secrets.PA_USERNAME }}
         PA_API_TOKEN: ${{ secrets.PA_API_TOKEN }}
       run: |
-        ssh ${PA_USERNAME}@ssh.pythonanywhere.com << 'EOF'
-          set -e  # Arrêter l'exécution si une commande échoue
-          echo "Début du déploiement..."
+        echo "Début du déploiement via l'API PythonAnywhere..."
 
-          # Aller dans le répertoire de l'application
-          cd ~/DjangoAuthentification
+        # Mettre à jour le code sur PythonAnywhere
+        curl -X POST -u "${PA_USERNAME}:${PA_API_TOKEN}" \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/.git/ \
+          -F content=@.git/
 
-          # Mettre à jour le code source
-          git pull origin main
+        # Redémarrer l'application web
+        curl -X POST -u "${PA_USERNAME}:${PA_API_TOKEN}" \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/webapps/${PA_USERNAME}.pythonanywhere.com/reload/
 
-          # Activer l'environnement virtuel
-          source ~/DjangoAuthentification/venv/bin/activate
-
-          # Installer les dépendances
-          pip install -r requirements.txt
-
-          # Exécuter les migrations Django
-          python manage.py migrate
-
-          # Collecter les fichiers statiques
-          python manage.py collectstatic --noinput
-
-          # Redémarrer l'application web
-          pa_reload_webapp.py ${PA_USERNAME}.pythonanywhere.com
-
-          echo "Déploiement terminé avec succès !"
-        EOF
+        echo "Déploiement terminé avec succès !"
