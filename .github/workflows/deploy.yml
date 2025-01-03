@@ -23,7 +23,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install requests jq
+        pip install requests
 
     # Étape 3 : Déployer avec l'API PythonAnywhere
     - name: Deploy using PythonAnywhere API
@@ -69,76 +69,18 @@ jobs:
             https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/DjangoAuthentification/accounts/$(basename $file)
         done
 
-        # Étape 1 : Lister toutes les consoles actives pour obtenir l'ID de la console
-        echo "Récupération de la console existante..."
-        RESPONSE=$(curl -s -X GET \
-          -H "Authorization: Token ${PA_API_TOKEN}" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/)
-
-        # Afficher la réponse brute pour diagnostiquer
-        echo "Réponse de l'API : ${RESPONSE}"
-
-        # Extraire l'ID de la première console dans le tableau
-        CONSOLE_ID=$(echo $RESPONSE | jq -r '.[0].id')
-
-        echo "Console ID : ${CONSOLE_ID}"
-
-        # Vérification de l'ID de la console
-        if [ -z "$CONSOLE_ID" ]; then
-          echo "Erreur : Impossible de récupérer l'ID de la console."
-          exit 1
-        fi
-
-        # Étape 2 : Exécuter les commandes Django dans la console existante
-
-        # 1. Activer l'environnement virtuel
+        # Étape 4 : Envoyer le script de déploiement
+        echo "Envoi du script de déploiement..."
         curl -X POST \
           -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "input=workon venv\n" \
+          -F "content=@deploy.sh" \
+          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/deploy.sh
+
+        # Étape 5 : Exécuter le script de déploiement
+        echo "Exécution du script de déploiement..."
+        curl -X POST \
+          -H "Authorization: Token ${PA_API_TOKEN}" \
+          -d "input=bash /home/${PA_USERNAME}/deploy.sh\n" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
-
-        # Attendre que l'environnement virtuel soit activé
-        sleep 10  # Augmenter le temps d'attente
-
-        # 2. Se déplacer dans le répertoire DjangoAuthentification
-        curl -X POST \
-          -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "input=cd /home/${PA_USERNAME}/DjangoAuthentification\n" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
-
-        # Attendre que la commande cd soit exécutée
-        sleep 10  # Augmenter le temps d'attente
-
-        # 3. Exécuter la commande makemigrations
-        curl -X POST \
-          -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "input=python manage.py makemigrations\n" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
-
-        # Attendre un peu avant d'envoyer la commande suivante
-        sleep 10  # Augmenter le temps d'attente
-
-        # 4. Exécuter la commande migrate
-        curl -X POST \
-          -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "input=python manage.py migrate\n" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
-
-        # Attendre un peu avant d'envoyer la commande suivante
-        sleep 10  # Augmenter le temps d'attente
-
-        # 5. Exécuter la commande collectstatic
-        curl -X POST \
-          -H "Authorization: Token ${PA_API_TOKEN}" \
-          -d "input=python manage.py collectstatic --noinput\n" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/
-
-        echo "Toutes les commandes Django ont été envoyées à la console."
-
-        # 4. Redémarrer l'application web
-        echo "Redémarrage de l'application web..."
-        curl -X POST \
-          -H "Authorization: Token ${PA_API_TOKEN}" \
-          https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/webapps/${PA_USERNAME}.pythonanywhere.com/reload/
 
         echo "Déploiement terminé avec succès !"
