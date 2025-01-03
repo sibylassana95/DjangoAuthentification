@@ -121,6 +121,7 @@ jobs:
         echo "Toutes les commandes Django ont été envoyées à la console."
 
 
+
         # 4. Redémarrer l'application web
         echo "Redémarrage de l'application web..."
         curl -X POST \
