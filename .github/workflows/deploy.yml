@@ -72,7 +72,7 @@ jobs:
         done
         # 2. Créer une commande avec toutes les étapes (éviter d'ouvrir trop de consoles)
         echo "Exécution des commandes Django..."
-        curl -X POST \
+        curl -X GET \
           -H "Authorization: Token ${PA_API_TOKEN}" \
           -d "command=workon venv && cd /home/${PA_USERNAME}/DjangoAuthentification  && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput" \
           https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/37411334/
